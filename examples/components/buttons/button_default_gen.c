@@ -43,18 +43,16 @@ lv_obj_t * button_default_create(lv_obj_t * parent, const char * button_label)
     if(!style_inited) {
         
         lv_style_init(&style_main);
-        lv_style_set_bg_color(&style_main, lv_color_hex(0x222222));
-        lv_style_set_bg_opa(&style_main, 255);
+        lv_style_set_bg_color(&style_main, lv_color_hex(0x7b00ff));
         lv_style_set_width(&style_main, LV_SIZE_CONTENT);
         lv_style_set_height(&style_main, LV_SIZE_CONTENT);
-        lv_style_set_radius(&style_main, 12);
+        lv_style_set_radius(&style_main, 8);
         lv_style_set_pad_hor(&style_main, 24);
         lv_style_set_pad_ver(&style_main, 12);
         lv_style_set_shadow_width(&style_main, 0);
 
         lv_style_init(&style_pr);
         lv_style_set_bg_color(&style_pr, lv_color_hex(0x333333));
-        lv_style_set_bg_opa(&style_pr, 255);
         lv_style_set_width(&style_pr, LV_SIZE_CONTENT);
         lv_style_set_height(&style_pr, LV_SIZE_CONTENT);
         lv_style_set_radius(&style_pr, 12);
