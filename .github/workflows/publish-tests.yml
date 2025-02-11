@@ -47,12 +47,13 @@ jobs:
       - name: Ensure lv_conf.h exists
         run: |
           mkdir -p /tmp/runtime/conf
+          
           if [ ! -f "/tmp/runtime/conf/lv_conf.h" ]; then
             echo "Creating lv_conf.h..."
             cat <<EOT > /tmp/runtime/conf/lv_conf.h
-            #define LV_CONF_VERSION_MAJOR 8
-            #define LV_CONF_VERSION_MINOR 3
-            EOT
+#define LV_CONF_VERSION_MAJOR 8
+#define LV_CONF_VERSION_MINOR 3
+EOT
           fi
 
       - name: Prepare preview files
@@ -100,9 +101,7 @@ jobs:
 
       - name: Build runtime
         run: |
-          # Create build directory
           mkdir -p /tmp/build
-          # Run CMake in Docker
           docker run --rm \
             -v /tmp/runtime:/work \
             -v /tmp/editor-preview/resources:/output \
