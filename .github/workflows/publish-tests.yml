@@ -44,6 +44,16 @@ jobs:
           cp -r /tmp/editor-preview/resources/* /tmp/runtime/
           git clone --depth 1 --branch v8.3.3 https://github.com/lvgl/lvgl.git /tmp/runtime/lvgl
 
+      - name: Ensure lv_conf.h exists
+        run: |
+          mkdir -p /tmp/runtime/conf
+          if [ ! -f "/tmp/runtime/conf/lv_conf.h" ]; then
+            echo "Creating lv_conf.h..."
+            cat <<EOT > /tmp/runtime/conf/lv_conf.h
+            #define LV_CONF_VERSION_MAJOR 8
+            #define LV_CONF_VERSION_MINOR 3
+            EOT
+          fi
 
       - name: Prepare preview files
         run: |
@@ -61,10 +71,8 @@ jobs:
         run: |
           WIDGET_LIST="[]"
           if [ -d "/tmp/editor-preview/project/examples/widgets" ]; then
-            # Find directories in widgets that contain .c files
             WIDGETS=$(find /tmp/editor-preview/project/examples/widgets -type f -name "*.c" -exec dirname {} \; | sort -u | xargs -n1 basename)
             if [ ! -z "$WIDGETS" ]; then
-              # Convert to array of '_widgetname_register'
               WIDGET_LIST="[$(echo "$WIDGETS" | tr ' ' '\n' | sed "s/.*/'_&_register'/" | tr '\n' ',' | sed 's/,$//' )]"
             fi
           fi
@@ -94,7 +102,6 @@ jobs:
         run: |
           # Create build directory
           mkdir -p /tmp/build
-
           # Run CMake in Docker
           docker run --rm \
             -v /tmp/runtime:/work \
@@ -108,7 +115,7 @@ jobs:
               -DLVGL_SRC_DIR=/work/lvgl \
               -DLVGL_CONF_DIR=/work/conf \
               -DUSER_SRC_DIR=/user_src \
-              -DCMAKE_C_FLAGS="-I/user_src" \
+              -DCMAKE_C_FLAGS="-I/user_src -DLV_CONF_PATH=\"/work/conf/lv_conf.h\"" \
               -DADDITIONAL_EXPORTED_FUNCTIONS="${{ steps.widget-list.outputs.widget_functions }}" \
               /work && \
               emmake make -j8'
